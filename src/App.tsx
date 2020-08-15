@@ -9,12 +9,12 @@ interface msgProp {
 	name: string
 }
 const App: FC = () => {
-	const [state, setState] = useState<msgProp>({ message: '', name: '' })
-	const [chat, setChat] = useState<msgProp[]>([])
+	const [ state, setState ] = useState<msgProp>({ message: '', name: '' })
+	const [ chat, setChat ] = useState<msgProp[]>([])
 
 	useEffect(() => {
 		socket.on('message', ({ name, message }: msgProp) => {
-			setChat([...chat, { name, message }])
+			setChat([ ...chat, { name, message } ])
 		})
 	})
 
@@ -24,9 +24,7 @@ const App: FC = () => {
 		socket.emit('message', { name, message })
 		setState({ message: '', name })
 	}
-	let onTextChange = (
-		e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-	) => {
+	let onTextChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
 		setState({ ...state, [e.target.name]: e.target.value })
 	}
 
@@ -34,7 +32,7 @@ const App: FC = () => {
 		return chat.map(({ name, message }, index) => (
 			<div key={index}>
 				<h2 style={{ color: 'blue' }}>
-					{name}:<span style={{ color: 'black' }}>{message}</span>
+					{name}:<span style={{ color: 'black', marginLeft: '10px' }}>{message}</span>
 				</h2>
 			</div>
 		))
@@ -49,28 +47,20 @@ const App: FC = () => {
 						<TextField
 							name="name"
 							placeholder="Tab to choose..."
-							onChange={(
-								e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-							) => onTextChange(e)}
+							onChange={(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => onTextChange(e)}
 							value={state.name}
 							label="Name"
-						></TextField>
+						/>
 						<TextField
 							name="message"
 							placeholder="Enter to Send ...."
-							onChange={(
-								e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-							) => onTextChange(e)}
+							onChange={(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => onTextChange(e)}
 							value={state.message}
 							label="Message"
 							variant="outlined"
-						></TextField>
+						/>
 					</div>
-					<button
-						className="btn"
-						color="primary"
-						disabled={state.message === ''}
-					>
+					<button className="btn" color="primary" disabled={state.message === ''}>
 						Send Message
 					</button>
 				</form>
