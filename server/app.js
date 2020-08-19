@@ -19,6 +19,19 @@ app.all('*', (req, res, next) => {
 	})
 	next()
 })
+const mongoose = require('mongoose')
+
+var app = express()
+
+// mongoose connect
+mongoose
+	.connect('mongodb://localhost:27017/react-chat', { useNewUrlParser: true, useUnifiedTopology: true })
+	.then(() => {
+		console.log('连接数据库成功')
+	})
+	.catch((err) => {
+		console.log(err)
+	})
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
