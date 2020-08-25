@@ -7,9 +7,9 @@ const LeftMenu = ({ mode, theme }: any) => {
 		<div>
 			<Menu mode={mode} theme={theme}>
 				<Menu.Item key="mail">
-					<a href="/">Home</a>
+					<a href="/">首页</a>
 				</Menu.Item>
-				<SubMenu title={<span>Blogs</span>}>
+				<SubMenu title={<span>博客</span>}>
 					<MenuItemGroup title="Item 1">
 						<Menu.Item key="setting:1">Option 1</Menu.Item>
 						<Menu.Item key="setting:2">Option 2</Menu.Item>
@@ -19,6 +19,9 @@ const LeftMenu = ({ mode, theme }: any) => {
 						<Menu.Item key="setting:4">Option 4</Menu.Item>
 					</MenuItemGroup>
 				</SubMenu>
+				<Menu.Item key="ChatRoom">
+					<a href="/chat">聊天室</a>
+				</Menu.Item>
 			</Menu>
 		</div>
 	)

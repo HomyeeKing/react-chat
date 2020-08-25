@@ -1,37 +1,42 @@
 import React, { useState } from 'react'
-import { Form, Input, Checkbox, Button } from 'antd'
+import { Form, Input, Checkbox, Button, message } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import './LoginPage.css'
 import { useDispatch } from 'react-redux'
-import { loginUser } from '../../_actions/user_actions'
+import { loginUser, setLoginStatus } from '../../_actions/user_actions'
 const LoginPage = (props: any) => {
 	const dispatch = useDispatch()
 	const REMEMBERME = 'rememberMe'
 
 	const rememberMeChecked = localStorage.getItem(REMEMBERME) ? true : false
-	const [rememberMe, setrememberMe] = useState(rememberMeChecked)
-	const handleRememberMe = () => {
-		console.log(rememberMeChecked)
 
+	const [rememberMe, setrememberMe] = useState(rememberMeChecked)
+
+	const handleRememberMe = () => {
 		setrememberMe(!rememberMe)
 	}
+
 	const onFinish = async (values: any) => {
-		console.log(values)
 		try {
 			let res = await dispatch(loginUser(values))
-			if (res.payload.loginSuccess) {
-				window.localStorage.setItem('uid', res.payload.uid)
+			const { loginSuccess, message: msg } = res.payload
+			if (loginSuccess) {
+				// 设置登录状态
+				dispatch(setLoginStatus(true))
 				if (rememberMe) {
-					localStorage.setItem(REMEMBERME, values.username)
+					localStorage.setItem(REMEMBERME, values.phone)
 				} else {
 					localStorage.removeItem(REMEMBERME)
 				}
-				// props.history.push('/')
+				message.success(msg)
+				props.history.push('/')
 			} else {
-				alert('账号或密码错误')
+				message.error(msg)
 			}
 		} catch (error) {
-			alert('网络异常')
+			console.log(error)
+
+			message.error('网络异常，请检查网络！')
 		}
 	}
 	const initUserAccount = localStorage.getItem(REMEMBERME)
@@ -42,42 +47,43 @@ const LoginPage = (props: any) => {
 			<Form
 				name="normal_login"
 				className="login-form"
-				initialValues={{ remember: true }}
+				initialValues={{ phone: initUserAccount }}
 				onFinish={onFinish}
 			>
 				<Form.Item
-					name="uid"
-					rules={[{ required: true, message: 'Please input your Username!' }]}
+					name="phone"
+					rules={[{ required: true, message: '请输入手机号进行登录' }]}
 				>
 					<Input
 						size="large"
 						prefix={<UserOutlined className="site-form-item-icon" />}
-						placeholder="Username"
+						placeholder="请输入手机号..."
 					/>
 				</Form.Item>
 				<Form.Item
 					name="password"
-					rules={[{ required: true, message: 'Please input your Password!' }]}
+					rules={[{ required: true, message: '请输入密码' }]}
 				>
 					<Input
+						size="large"
 						prefix={<LockOutlined className="site-form-item-icon" />}
 						type="password"
-						placeholder="Password"
+						placeholder="请输入密码..."
 					/>
 				</Form.Item>
 				<Form.Item>
-					<Form.Item name="remember" valuePropName="checked" noStyle>
+					<Form.Item name="remember">
 						<Checkbox
-							id="remembere"
+							id="rememberMe"
 							onChange={handleRememberMe}
 							checked={rememberMe}
 						>
-							Remember me
+							记住我
 						</Checkbox>
 					</Form.Item>
 
 					<a className="login-form-forgot" href="/">
-						Forgot password
+						忘记密码
 					</a>
 				</Form.Item>
 
@@ -87,9 +93,9 @@ const LoginPage = (props: any) => {
 						htmlType="submit"
 						className="login-form-button"
 					>
-						Log in
+						登录
 					</Button>
-					Or <a href="/register">register now!</a>
+					Or <a href="/register">立即注册!</a>
 				</Form.Item>
 			</Form>
 		</div>

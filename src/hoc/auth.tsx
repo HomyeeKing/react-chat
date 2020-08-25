@@ -1,37 +1,11 @@
-import React, { useEffect, ComponentType } from 'react'
 import { auth } from '../_actions/user_actions'
-import { API_CALLBACK_PROP } from '../views/Config'
-import { useSelector, useDispatch } from 'react-redux'
 
-export default function <T>(
-	SpecificComponent: ComponentType<T>,
-	option: any,
-	adminRoute = null
-) {
-	const AuthenticationCheck = (props: any) => {
-		let user = useSelector((state: any) => state.user)
-		const dispatch = useDispatch()
-		useEffect(() => {
-			dispatch(auth()).then((res: API_CALLBACK_PROP) => {
-				//without auth
+import { useDispatch } from 'react-redux'
 
-				if (!res.payload.isAuth) {
-					if (option) {
-						props.history.push('/login')
-					}
-				} else {
-					if (adminRoute && !res.payload.isAdmin) {
-						props.history.push('/')
-					} else {
-						if (option === false) {
-							props.history.push('/')
-						}
-					}
-				}
-			})
-		}, [])
+export default async function () {
+	const dispatch = useDispatch()
 
-		return <SpecificComponent {...props} user={user} />
-	}
-	return AuthenticationCheck
+	let res = await dispatch(auth())
+	const { isAuth } = res.payload
+	return isAuth
 }

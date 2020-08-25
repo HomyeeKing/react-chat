@@ -6,6 +6,8 @@ var logger = require('morgan')
 
 var indexRouter = require('./routes/index')
 var usersRouter = require('./routes/users')
+const chatRouter = require('./routes/chat')
+const mongoose = require('mongoose')
 
 var app = express()
 
@@ -19,13 +21,13 @@ app.all('*', (req, res, next) => {
 	})
 	next()
 })
-const mongoose = require('mongoose')
-
-var app = express()
 
 // mongoose connect
 mongoose
-	.connect('mongodb://localhost:27017/react-chat', { useNewUrlParser: true, useUnifiedTopology: true })
+	.connect('mongodb://localhost:27017/react-chat', {
+		useNewUrlParser: true,
+		useUnifiedTopology: true
+	})
 	.then(() => {
 		console.log('连接数据库成功')
 	})
@@ -45,6 +47,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/', indexRouter)
 app.use('/api/users', usersRouter)
+app.use('/api/chat', chatRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

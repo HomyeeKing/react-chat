@@ -2,8 +2,9 @@ var express = require('express')
 var router = express.Router()
 
 const User = require('../model/user')
+const auth = require('../middleware/auth')
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
 	// res.send('respond with a resource')
 	res.redirect('https://www.baidu.com')
 })
@@ -17,21 +18,23 @@ router.post('/register', (req, res) => {
 })
 
 router.post('/login', (req, res) => {
-	User.findOne({ email: req.body.email }, (err, user) => {
+	User.findOne({ phone: req.body.phone }, (err, user) => {
 		if (!user)
 			return res.json({
 				loginSuccess: false,
-				message: 'Auth failed, email not found'
+				message: '该账号不存在！'
 			})
 
 		user.comparePassword(req.body.password, (err, isMatch) => {
-			if (!isMatch) return res.json({ loginSuccess: false, message: 'Wrong password' })
+			if (!isMatch)
+				return res.json({ loginSuccess: false, message: '密码错误' })
 
 			user.generateToken((err, user) => {
 				if (err) return res.status(400).send(err)
 				res.cookie('w_authExp', user.tokenExp)
 				res.cookie('w_auth', user.token).status(200).json({
 					loginSuccess: true,
+					message: '登录成功',
 					userId: user._id
 				})
 			})
@@ -39,4 +42,29 @@ router.post('/login', (req, res) => {
 	})
 })
 
+router.post('/auth', auth, (req, res) => {
+	console.log('auth')
+	res.status(200).json({
+		isAdmin: req.user.role !== 0,
+		isAuth: true,
+		email: req.user.email,
+		username: req.user.username,
+		_id: req.user._id,
+		role: req.user.role,
+		avatar: req.user.avatar
+	})
+})
+
+router.post('/logout', auth, (req, res) => {
+	User.findOneAndUpdate(
+		{ _id: req.user._id },
+		{ token: '', tokenExp: '' },
+		(err, doc) => {
+			if (err) return res.json({ success: false, err })
+			return res.status(200).send({
+				success: true
+			})
+		}
+	)
+})
 module.exports = router

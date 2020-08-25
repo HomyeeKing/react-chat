@@ -22,12 +22,9 @@ app.set('port', port)
 var server = http.createServer(app)
 
 // socket.io config
-const io = require('socket.io')(server)
-io.on('connection', (socket) => {
-	socket.on('message', ({ name, message }) => {
-		io.emit('message', { name, message })
-	})
-})
+const socket = require('../socket')
+socket(server)
+
 /**
  * Listen on provided port, on all network interfaces.
  */

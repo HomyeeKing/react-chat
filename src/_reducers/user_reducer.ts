@@ -2,7 +2,8 @@ import {
 	LOGIN_USER,
 	REGISTER_USER,
 	AUTH_USER,
-	LOGOUT_USER
+	LOGOUT_USER,
+	SET_LOGIN_STATUS
 } from '../_actions/types'
 
 import { API_CALLBACK_PROP } from '../views/Config'
@@ -12,6 +13,9 @@ export default function (state = {}, action: API_CALLBACK_PROP) {
 			return { ...state, register: action.payload }
 		case LOGIN_USER:
 			return { ...state, loginSuccess: action.payload }
+		case SET_LOGIN_STATUS:
+			localStorage.setItem('isLogin', action.payload)
+			return { ...state, isLogin: action.payload }
 		case AUTH_USER:
 			return { ...state, userData: action.payload }
 		case LOGOUT_USER:

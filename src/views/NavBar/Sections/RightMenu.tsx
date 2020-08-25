@@ -1,41 +1,63 @@
 import React from 'react'
 import axios from '../../../utils/axios'
 import { USER_SERVER } from '../../Config'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import { Menu } from 'antd'
+import { Menu, message, Avatar, Button } from 'antd'
+import { UserOutlined } from '@ant-design/icons'
+import { setLoginStatus } from '../../../_actions/user_actions'
 
 const RightMenu = (props: any) => {
 	const user = useSelector((state: any) => state.user)
-	console.log(user)
-
-	const logoutHandler = () => {
-		axios.get(`${USER_SERVER}/logout`).then((res) => {
-			if (res.status === 200) {
-				props.history.push('/login')
-			} else {
-				alert('log out failed')
+	const dispatch = useDispatch()
+	const logoutHandler = async () => {
+		try {
+			let res = await axios.post(`${USER_SERVER}/logout`)
+			if (res.data.success) {
+				message.warning('账号已退出登录')
+				dispatch(setLoginStatus(false))
+				props.history.replace('/')
 			}
-		})
+		} catch (error) {
+			message.error('退出登录失败，请检查网络！' + error)
+		}
 	}
-	//没有登录认证
 
-	if (user.userData && !user.userData.isAuth) {
+	const avatarContent = () => {
+		return (
+			(user.userData && user.userData.username.charAt(0).toUpperCase()) || null
+		)
+	}
+
+	if (!user.isLogin) {
+		//没有登录认证
 		return (
 			<Menu mode={props.mode}>
 				<Menu.Item key="mail">
-					<a href="/login">Signin</a>
+					<a href="/login">登录</a>
 				</Menu.Item>
 				<Menu.Item key="app">
-					<a href="/register">Signup</a>
+					<a href="/register">注册</a>
 				</Menu.Item>
 			</Menu>
 		)
 	} else {
 		return (
 			<Menu mode={props.mode}>
+				<>
+					<Avatar
+						style={{ backgroundColor: '#f56a00', verticalAlign: 'middle' }}
+						size="large"
+						icon={avatarContent() || <UserOutlined />}
+					>
+						{avatarContent()}
+					</Avatar>
+				</>
+
 				<Menu.Item key="logout">
-					<a onClick={logoutHandler}>Logout</a>
+					<Button onClick={logoutHandler} size="large" type="dashed">
+						退出登录
+					</Button>
 				</Menu.Item>
 			</Menu>
 		)

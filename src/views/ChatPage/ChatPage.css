@@ -1,0 +1,34 @@
+.infinite-container {
+	width: 800px;
+	height: 600px;
+	overflow-y: scroll;
+	border: 1px solid #000;
+}
+.msg-block {
+	display: flex;
+	margin-top: 10px;
+}
+
+.chat-block-right {
+	margin-left: 10px;
+}
+.chat-block-right > small {
+	color: burlywood;
+	font-weight: bold;
+}
+.chat-block-right > p {
+	max-width: 300px;
+	max-height: 50px;
+	min-height: 50px;
+	min-width: 30px;
+	border: 1px solid #000;
+	border-radius: 20px;
+	padding: 10px;
+	background: linear-gradient(135deg, blue, teal);
+	color: #fff;
+}
+
+/* 底部输入部分样式 */
+.bottom-input {
+	display: inline-block;
+}
