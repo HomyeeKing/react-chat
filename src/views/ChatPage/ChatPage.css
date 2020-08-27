@@ -4,9 +4,11 @@
 	overflow-y: scroll;
 	border: 1px solid #000;
 }
+
 .msg-block {
 	display: flex;
 	margin-top: 10px;
+	height: 100px;
 }
 
 .chat-block-right {
@@ -27,8 +29,29 @@
 	background: linear-gradient(135deg, blue, teal);
 	color: #fff;
 }
+.bottom-input button {
+	height: 100%;
+}
 
-/* 底部输入部分样式 */
-.bottom-input {
-	display: inline-block;
+/* drawer btn fixed in right */
+
+.right-drawer > button {
+	position: fixed;
+	height: 400px;
+	width: 40px;
+	left: 0;
+	top: 40%;
+	background-color: lightseagreen;
+	color: #fff;
+	border-top-right-radius: 20px;
+	border-bottom-right-radius: 20px;
+	outline: none;
+	word-wrap: none;
+	transition: padding, width 1s ease;
+}
+.right-drawer > button:hover {
+	cursor: pointer;
+	box-shadow: 10px 0 10px #ccc;
+
+	width: 50px;
 }

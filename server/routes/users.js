@@ -67,4 +67,27 @@ router.post('/logout', auth, (req, res) => {
 		}
 	)
 })
+
+//获取所有（标识在线）用户
+router.post('/getUsers', async (req, res) => {
+	const { uid } = req.body
+	console.log(req.body)
+	try {
+		let users = await User.find(
+			{ _id: { $ne: uid } },
+			{ avatar: 1, username: 1, _id: 0 }
+		)
+		let cur = await User.find({ _id: uid }, { avatar: 1, username: 1, _id: 0 })
+
+		//按昵称首字母排序
+		users.sort((a, b) => a.username.localeCompare(b.username))
+		users.unshift(cur[0])
+		res.status(200).json({
+			count: users.length,
+			users
+		})
+	} catch (error) {
+		res.status(500).json('Get Users Failed!')
+	}
+})
 module.exports = router

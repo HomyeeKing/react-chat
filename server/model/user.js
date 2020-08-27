@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+
+const eventBus = require('../utils/eventBus')
 const userSchema = mongoose.Schema({
 	phone: {
 		type: Number,
@@ -45,6 +47,8 @@ userSchema.pre('save', function (next) {
 			bcrypt.hash(user.password, salt, (err, hash) => {
 				if (err) return next(err)
 				user.password = hash
+				eventBus.updateUserEmmiter()
+				// updateUser.emit('updateCurrentUser', () => {})
 				next()
 			})
 		})

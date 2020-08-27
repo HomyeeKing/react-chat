@@ -41,10 +41,11 @@ const RegisterPage = (props: any) => {
 	const [form] = Form.useForm()
 	const dispatch = useDispatch()
 	const onFinish = async (values: any) => {
-		console.log('Received values of form: ', values)
 		try {
 			let res = await dispatch(registerUser(values))
-			const { success } = res.payload.data
+			console.log(res)
+
+			const { success } = res.payload
 			console.log(res)
 
 			if (success) {

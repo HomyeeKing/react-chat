@@ -1,8 +1,11 @@
 module.exports = function (server) {
 	const io = require('socket.io')(server)
 	const Chat = require('../model/Chat')
+	const eventBus = require('../utils/eventBus')
 	io.on('connection', (socket) => {
 		socket.on('backend-message', ({ msg, _id, type = 'text' }, callback) => {
+			console.log('get msg from frontend')
+
 			try {
 				let chat = new Chat({
 					message: msg,
@@ -28,6 +31,11 @@ module.exports = function (server) {
 			} catch (error) {
 				throw error
 			}
+		})
+
+		// 监听事件，通知客户端更新当前的在线用户
+		eventBus.updateUserRegister(() => {
+			socket.emit('user-list')
 		})
 	})
 }
