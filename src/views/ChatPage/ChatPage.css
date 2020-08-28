@@ -3,6 +3,7 @@
 	height: 600px;
 	overflow-y: scroll;
 }
+
 /* message bar avatar username  */
 .msg-block {
 	display: flex;
@@ -21,7 +22,6 @@
 }
 .chat-block-right > p {
 	max-width: 300px;
-	max-height: 300px;
 	min-height: 50px;
 	min-width: 30px;
 	border: 1px solid #000;
@@ -29,6 +29,7 @@
 	padding: 10px;
 	background: linear-gradient(135deg, blue, teal);
 	color: #fff;
+	word-wrap: break-word;
 }
 
 .bottom-input button {

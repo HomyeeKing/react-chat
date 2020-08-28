@@ -22,6 +22,7 @@ import { useDispatch, useSelector, RootStateOrAny } from 'react-redux'
 import { afterPostMessage, getChats } from '../../_actions/chat_actions'
 import { getUsers } from '../../_actions/user_actions'
 import { CHAT_SERVER } from '../Config'
+import { msgCategory } from './messageHandle'
 
 const socket = io.connect('http://localhost:5000')
 
@@ -35,7 +36,8 @@ const Chat = () => {
 	const [forceUpdate, setForceUpdate] = useState<number>(0)
 	const [drawShow, setDrawShow] = useState<boolean>(false)
 	const [msg, setMsg] = useState('')
-	const [fileList, setFileList] = useState([])
+	const [imgList, setImgList] = useState([])
+	const [videoList, setVideoList] = useState([])
 
 	const ref = useRef<HTMLDivElement>(null)
 
@@ -77,18 +79,35 @@ const Chat = () => {
 		}
 
 		const { username, _id, avatar } = user.userData
-		if (fileList.length > 0) {
-			fileList.forEach((file: any) => {
-				console.log(file.response.paths[0])
-
+		if (imgList.length > 0) {
+			imgList.forEach((img: any) => {
 				socket.emit('backend-message', {
-					msg: file.response.paths[0],
+					msg: img.response.paths[0],
 					username,
 					avatar,
 					sendTime: Date.now(),
 					_id,
 					type: 'img'
 				})
+			})
+			setImgList([])
+		}
+		if (videoList.length > 0) {
+			videoList.forEach((video: any) => {
+				socket.emit(
+					'backend-message',
+					{
+						msg: video.response.path,
+						username,
+						avatar,
+						sendTime: Date.now(),
+						_id,
+						type: 'video'
+					},
+					(state: number) => {
+						if (state === 0) setVideoList([])
+					}
+				)
 			})
 		}
 		if (msg !== '') {
@@ -108,24 +127,6 @@ const Chat = () => {
 					}
 				}
 			)
-		}
-	}
-
-	const msgCategory: any = {
-		text: function (msg: string) {
-			return <p>{msg}</p>
-		},
-		img: function (msg: string) {
-			return (
-				<img
-					style={{ objectFit: 'cover' }}
-					src={`http://localhost:5000/images/${msg}`}
-					alt="chat-img"
-				/>
-			)
-		},
-		video: function (msg: string) {
-			return <audio src={`http://localhost:5000/images/${msg}`}></audio>
 		}
 	}
 
@@ -186,11 +187,14 @@ const Chat = () => {
 
 	// 图片上传
 	const handleImageUpload = ({ file, fileList, event }: any) => {
-		console.log(file)
-
-		setFileList(fileList)
+		setImgList(fileList)
 	}
 
+	// 视频上传
+
+	const handleVideoUpload = ({ file, fileList, event }: any) => {
+		setVideoList(fileList)
+	}
 	return (
 		<>
 			<div style={{ textAlign: 'center', marginTop: '4rem' }}>
@@ -207,7 +211,7 @@ const Chat = () => {
 							multiple
 							accept="image/*"
 							name="images"
-							fileList={fileList}
+							fileList={imgList}
 							action={`http://localhost:5000${CHAT_SERVER}/uploadImages`}
 							withCredentials={true}
 							onChange={handleImageUpload}
@@ -219,9 +223,11 @@ const Chat = () => {
 						<Upload
 							multiple
 							accept="video/*"
-							name="videos"
+							name="video"
+							fileList={videoList}
+							onChange={handleVideoUpload}
 							withCredentials={true}
-							action={`http://localhost:5000${CHAT_SERVER}/uploadVideos`}
+							action={`http://localhost:5000${CHAT_SERVER}/uploadVideo`}
 						>
 							<PlaySquareFilled />
 						</Upload>

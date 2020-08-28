@@ -19,7 +19,7 @@ const storeageVideo = multer.diskStorage({
 	}
 })
 const uploadImage = multer({ storage: storeageImage }).array('images', 12)
-const uploadVideo = multer({ storage: storeageVideo })
+const uploadVideo = multer({ storage: storeageVideo }).single('video')
 
 router.post('/getChats', async (req, res) => {
 	await Chat.find({}, { __v: 0 })
@@ -41,7 +41,10 @@ router.post('/uploadImages', auth, (req, res) => {
 	})
 })
 
-router.post('/uploadVideos', (req, res) => {
-	console.log(req.body)
+router.post('/uploadVideo', auth, (req, res) => {
+	uploadVideo(req, res, (err) => {
+		if (err) return res.json({ success: false, err })
+		return res.json({ success: true, path: req.file.filename })
+	})
 })
 module.exports = router
