@@ -10,15 +10,19 @@ import {
 	Avatar,
 	Drawer,
 	List,
-	Tag,
-	message
+	Tag
 } from 'antd'
-import { UploadOutlined, EnterOutlined } from '@ant-design/icons'
+import {
+	EnterOutlined,
+	PictureFilled,
+	PlaySquareFilled
+} from '@ant-design/icons'
 import './ChatPage.css'
 import { useDispatch, useSelector, RootStateOrAny } from 'react-redux'
 import { afterPostMessage, getChats } from '../../_actions/chat_actions'
 import { getUsers } from '../../_actions/user_actions'
-import { REQUEST_ERROR } from '../../_actions/types'
+import { CHAT_SERVER } from '../Config'
+
 const socket = io.connect('http://localhost:5000')
 
 /**
@@ -31,6 +35,8 @@ const Chat = () => {
 	const [forceUpdate, setForceUpdate] = useState<number>(0)
 	const [drawShow, setDrawShow] = useState<boolean>(false)
 	const [msg, setMsg] = useState('')
+	const [fileList, setFileList] = useState([])
+
 	const ref = useRef<HTMLDivElement>(null)
 
 	const user = useSelector((state: RootStateOrAny) => state.user)
@@ -71,22 +77,56 @@ const Chat = () => {
 		}
 
 		const { username, _id, avatar } = user.userData
-		socket.emit(
-			'backend-message',
-			{
-				msg,
-				username,
-				_id,
-				sendTime: +new Date(),
-				avatar
-			},
-			(status: number) => {
-				if (status === 0) {
-					setMsg('')
-					setForceUpdate((c) => c + 1)
+		if (fileList.length > 0) {
+			fileList.forEach((file: any) => {
+				console.log(file.response.paths[0])
+
+				socket.emit('backend-message', {
+					msg: file.response.paths[0],
+					username,
+					avatar,
+					sendTime: Date.now(),
+					_id,
+					type: 'img'
+				})
+			})
+		}
+		if (msg !== '') {
+			socket.emit(
+				'backend-message',
+				{
+					msg,
+					username,
+					_id,
+					sendTime: +new Date(),
+					avatar
+				},
+				(status: number) => {
+					if (status === 0) {
+						setMsg('')
+						setForceUpdate((c) => c + 1)
+					}
 				}
-			}
-		)
+			)
+		}
+	}
+
+	const msgCategory: any = {
+		text: function (msg: string) {
+			return <p>{msg}</p>
+		},
+		img: function (msg: string) {
+			return (
+				<img
+					style={{ objectFit: 'cover' }}
+					src={`http://localhost:5000/images/${msg}`}
+					alt="chat-img"
+				/>
+			)
+		},
+		video: function (msg: string) {
+			return <audio src={`http://localhost:5000/images/${msg}`}></audio>
+		}
 	}
 
 	const renderChat = () => {
@@ -98,7 +138,7 @@ const Chat = () => {
 					</div>
 					<div className="chat-block-right">
 						<small>{chat.sender?.username}</small>
-						<p>{chat.message}</p>
+						{msgCategory[chat.type](chat.message)}
 					</div>
 				</div>
 			)
@@ -144,6 +184,13 @@ const Chat = () => {
 		)
 	}
 
+	// 图片上传
+	const handleImageUpload = ({ file, fileList, event }: any) => {
+		console.log(file)
+
+		setFileList(fileList)
+	}
+
 	return (
 		<>
 			<div style={{ textAlign: 'center', marginTop: '4rem' }}>
@@ -154,9 +201,34 @@ const Chat = () => {
 					{renderChat()}
 					<div ref={ref} style={{ float: 'left', clear: 'both' }}></div>
 				</div>
-
+				<Row className="function-area">
+					<Col span={3} title="发送图片">
+						<Upload
+							multiple
+							accept="image/*"
+							name="images"
+							fileList={fileList}
+							action={`http://localhost:5000${CHAT_SERVER}/uploadImages`}
+							withCredentials={true}
+							onChange={handleImageUpload}
+						>
+							<PictureFilled />
+						</Upload>
+					</Col>
+					<Col span={3} title="发送视频">
+						<Upload
+							multiple
+							accept="video/*"
+							name="videos"
+							withCredentials={true}
+							action={`http://localhost:5000${CHAT_SERVER}/uploadVideos`}
+						>
+							<PlaySquareFilled />
+						</Upload>
+					</Col>
+				</Row>
 				<Row className="bottom-input">
-					<Col span={18}>
+					<Col span={20}>
 						<Input.TextArea
 							id="message"
 							placeholder="Let's start talking"
@@ -164,15 +236,8 @@ const Chat = () => {
 							onChange={(e) => setMsg(e.target.value)}
 						/>
 					</Col>
-					<Col span={3}>
-						<Upload>
-							<Button className="height-100">
-								<UploadOutlined />
-								点击上传
-							</Button>
-						</Upload>
-					</Col>
-					<Col span={3}>
+
+					<Col span={4}>
 						<Button
 							type="primary"
 							style={{ width: '100%' }}

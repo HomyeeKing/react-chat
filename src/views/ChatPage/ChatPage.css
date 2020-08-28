@@ -2,17 +2,18 @@
 	width: 800px;
 	height: 600px;
 	overflow-y: scroll;
-	border: 1px solid #000;
 }
-
+/* message bar avatar username  */
 .msg-block {
 	display: flex;
 	margin-top: 10px;
-	height: 100px;
+	height: auto;
 }
 
 .chat-block-right {
 	margin-left: 10px;
+	display: flex;
+	flex-direction: column;
 }
 .chat-block-right > small {
 	color: burlywood;
@@ -20,7 +21,7 @@
 }
 .chat-block-right > p {
 	max-width: 300px;
-	max-height: 50px;
+	max-height: 300px;
 	min-height: 50px;
 	min-width: 30px;
 	border: 1px solid #000;
@@ -29,8 +30,21 @@
 	background: linear-gradient(135deg, blue, teal);
 	color: #fff;
 }
+
 .bottom-input button {
 	height: 100%;
+}
+
+/* function area icon config */
+.function-area .anticon {
+	font-size: 1.5rem;
+	transition: transform 0.8s ease;
+}
+
+.function-area .anticon:hover {
+	cursor: pointer;
+	box-shadow: 0 0 10px #ccc;
+	transform: scale(1.5);
 }
 
 /* drawer btn fixed in right */
@@ -47,7 +61,7 @@
 	border-bottom-right-radius: 20px;
 	outline: none;
 	word-wrap: none;
-	transition: padding, width 1s ease;
+	transition: padding, width 0.5s ease-in;
 }
 .right-drawer > button:hover {
 	cursor: pointer;

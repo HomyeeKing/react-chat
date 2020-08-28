@@ -71,7 +71,6 @@ router.post('/logout', auth, (req, res) => {
 //获取所有（标识在线）用户
 router.post('/getUsers', async (req, res) => {
 	const { uid } = req.body
-	console.log(req.body)
 	try {
 		let users = await User.find(
 			{ _id: { $ne: uid } },

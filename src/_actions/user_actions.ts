@@ -5,8 +5,7 @@ import {
 	AUTH_USER,
 	REGISTER_USER,
 	SET_LOGIN_STATUS,
-	GET_USERS,
-	REQUEST_ERROR
+	GET_USERS
 } from './types'
 
 import { USER_SERVER } from '../views/Config'
@@ -48,17 +47,9 @@ export async function logoutUser() {
 	}
 }
 export async function getUsers(uid: string) {
-	try {
-		const request = await axios.post(`${USER_SERVER}/getUsers`, { uid })
-		return {
-			type: GET_USERS,
-			payload: request.data
-		}
-	} catch (error) {
-		console.log(error)
-
-		return {
-			type: REQUEST_ERROR
-		}
+	const request = await axios.post(`${USER_SERVER}/getUsers`, { uid })
+	return {
+		type: GET_USERS,
+		payload: request.data
 	}
 }

@@ -4,12 +4,10 @@ import {
 	AUTH_USER,
 	LOGOUT_USER,
 	SET_LOGIN_STATUS,
-	GET_USERS,
-	REQUEST_ERROR
+	GET_USERS
 } from '../_actions/types'
 
 import { API_CALLBACK_PROP } from '../views/Config'
-import { message } from 'antd'
 export default function (state = {}, action: API_CALLBACK_PROP) {
 	switch (action.type) {
 		case REGISTER_USER:
@@ -29,8 +27,6 @@ export default function (state = {}, action: API_CALLBACK_PROP) {
 				allUsers: action.payload.users,
 				count: action.payload.count
 			}
-		case REQUEST_ERROR:
-			return message.error('请求失败！')
 
 		default:
 			return state

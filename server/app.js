@@ -17,7 +17,7 @@ app.all('*', (req, res, next) => {
 		'Access-Control-Allow-Origin': 'http://localhost:3000',
 		'Access-Control-Allow-Credentials': 'true',
 		'Access-Control-Allow-Headers':
-			'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+			'Origin, X-Requested-With, Content-Type, Accept, Authorization,Accept-Encoding'
 	})
 	next()
 })
@@ -47,7 +47,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/', indexRouter)
 app.use('/api/users', usersRouter)
-app.use('/api/chat', chatRouter)
+app.use('/api/chats', chatRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

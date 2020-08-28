@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { message } from 'antd'
 
 axios.defaults.baseURL = 'http://localhost:5000'
 axios.interceptors.request.use((config) => {
@@ -15,7 +16,7 @@ axios.interceptors.response.use(
 		console.log(error)
 
 		// if (error.response.status === 302) {
-		window.location.href = '/'
+		message.error('请求失败！', error)
 		return
 		// }
 		// else {
