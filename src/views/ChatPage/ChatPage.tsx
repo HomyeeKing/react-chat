@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useReducer } from 'react'
 import io from 'socket.io-client'
 
 import {
@@ -33,7 +33,7 @@ const socket = io.connect('http://localhost:5000')
  */
 
 const Chat = () => {
-	const [forceUpdate, setForceUpdate] = useState<number>(0)
+	const [update, forceUpdate] = useReducer((c) => c + 1, 0)
 	const [drawShow, setDrawShow] = useState<boolean>(false)
 	const [msg, setMsg] = useState('')
 	const [imgList, setImgList] = useState([])
@@ -49,6 +49,7 @@ const Chat = () => {
 	useEffect(() => {
 		const getChat = async () => {
 			await dispatch(getChats())
+			console.log(chat)
 
 			// 将滚动条置于底部
 			ref.current?.scrollIntoView({ behavior: 'smooth' })
@@ -69,7 +70,7 @@ const Chat = () => {
 		return () => {
 			socket.close()
 		}
-	}, [dispatch])
+	}, [dispatch, update])
 
 	let onMessageSubmit = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
 		e.preventDefault()
@@ -123,7 +124,7 @@ const Chat = () => {
 				(status: number) => {
 					if (status === 0) {
 						setMsg('')
-						setForceUpdate((c) => c + 1)
+						forceUpdate()
 					}
 				}
 			)
@@ -135,7 +136,7 @@ const Chat = () => {
 			return (
 				<div key={chat._id} className="msg-block">
 					<div className="avatar">
-						<Avatar size={55} src={chat.sender?.avatar} />
+						<Avatar size={55} src={chat.sender.avatar} />
 					</div>
 					<div className="chat-block-right">
 						<small>{chat.sender?.username}</small>
@@ -203,7 +204,7 @@ const Chat = () => {
 			<div style={{ maxWidth: '800px', margin: '0 auto' }}>
 				<div className="infinite-container">
 					{renderChat()}
-					<div ref={ref} style={{ float: 'left', clear: 'both' }}></div>
+					<div ref={ref}></div>
 				</div>
 				<Row className="function-area">
 					<Col span={3} title="发送图片">

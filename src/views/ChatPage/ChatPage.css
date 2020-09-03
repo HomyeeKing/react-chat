@@ -20,6 +20,7 @@
 	color: burlywood;
 	font-weight: bold;
 }
+/* 文本 */
 .chat-block-right > p {
 	max-width: 300px;
 	min-height: 50px;

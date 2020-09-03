@@ -5,6 +5,7 @@ axios.defaults.baseURL = 'http://localhost:5000'
 axios.interceptors.request.use((config) => {
 	config.headers['Accept'] = 'application/json'
 	config.withCredentials = true
+
 	return config
 })
 
@@ -13,15 +14,13 @@ axios.interceptors.response.use(
 		return Promise.resolve(res)
 	},
 	(error) => {
-		console.log(error)
-
-		// if (error.response.status === 302) {
+		if (error.response.status === 401) {
+			message.warning('身份过期请重新登录！')
+			localStorage.setItem('isLogin', 'false')
+			window.location.replace('/login')
+			return
+		}
 		message.error('请求失败！', error)
-		return
-		// }
-		// else {
-		// return Promise.reject(err);
-		// }
 	}
 )
 

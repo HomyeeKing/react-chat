@@ -25,7 +25,9 @@ const RightMenu = (props: any) => {
 
 	const avatarContent = () => {
 		return (
-			(user.userData && user.userData.username.charAt(0).toUpperCase()) || null
+			(user.userData &&
+				user.userData.isAuth &&
+				user.userData.username.charAt(0).toUpperCase()) || <UserOutlined />
 		)
 	}
 
@@ -48,7 +50,7 @@ const RightMenu = (props: any) => {
 					<Avatar
 						style={{ backgroundColor: '#f56a00', verticalAlign: 'middle' }}
 						size="large"
-						icon={avatarContent() || <UserOutlined />}
+						icon={avatarContent()}
 					>
 						{avatarContent()}
 					</Avatar>

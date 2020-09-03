@@ -5,6 +5,7 @@ module.exports = {
 	updateUserRegister(fn) {
 		ev.on(UPDATE_USER, () => {
 			console.log('dispatch event through socket to let client to update')
+			console.log(ev.listenerCount(UPDATE_USER))
 			fn.apply(this, arguments)
 		})
 	},

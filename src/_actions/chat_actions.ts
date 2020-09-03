@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from '../utils/axios'
 import { GET_CHATS, AFTER_POST_MESSAGE } from './types'
 import { CHAT_SERVER } from '../views/Config'
 export async function getChats() {

@@ -32,7 +32,7 @@ mongoose
 		console.log('连接数据库成功')
 	})
 	.catch((err) => {
-		console.log(err)
+		console.log('数据库连接失败')
 	})
 
 // view engine setup
